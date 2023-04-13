@@ -50,10 +50,13 @@ const deleteEmployee = async (req, res) => {
     res.json(result);
 }
 
-const getEmployee = (req, res) => {
-    const employee = data.employees.find(emp => emp.id === parseInt(req.params.id));
+const getEmployee = async (req, res) => {
+    if (!req?.params?.id) return res.status(400).json({ 'message': 'Employee ID require' });
+
+    const employee = await Employee.findOne({ _id: req.params.id }).exec();
+
     if (!employee) {
-        return res.status(400).json({ "message": `Employee ID ${req.params.id} not found` });
+        return res.status(204).json({ "message": `No employee matches ID ${req.params.id}` });
     }
     res.json(employee);
 }
